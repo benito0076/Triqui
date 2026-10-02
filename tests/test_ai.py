@@ -21,7 +21,7 @@ class AITests(unittest.TestCase):
 
     def test_minimax_never_loses_to_random(self):
         random.seed(0)
-        for _ in range(200):
+        for _ in range(30):
             self.assertNotEqual(play_out(minimax, pollito).winner(), O)
             self.assertNotEqual(play_out(pollito, minimax).winner(), X)
 

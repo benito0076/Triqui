@@ -5,20 +5,21 @@ from __future__ import annotations
 import argparse
 
 from .ai import RIVALS
-from .board import X, Board
+from .board import MODES, X, Board
 
 
 def ask_move(board: Board) -> int:
     legal = board.legal_moves()
+    last = board.size ** 2
     while True:
-        raw = input(f"Turno de {board.turn}. Casilla (1-9): ").strip()
+        raw = input(f"Turno de {board.turn}. Casilla (1-{last}): ").strip()
         if raw.isdigit() and int(raw) - 1 in legal:
             return int(raw) - 1
         print("Jugada inválida, intenta de nuevo.")
 
 
-def play_game(rival: str | None) -> None:
-    board = Board()
+def play_game(rival: str | None, mode: str = "clasico") -> None:
+    board = Board.from_mode(mode)
     human = X  # contra la IA, la persona siempre es X
     while not board.is_over():
         print("\n" + str(board) + "\n")
@@ -44,6 +45,10 @@ def main() -> None:
         help="juegan dos personas en el mismo equipo",
     )
     parser.add_argument(
+        "--modo", choices=sorted(MODES), default="clasico",
+        help="clasico (3x3), gran5 (5x5, 4 en línea) o gran7 (7x7, 5 en línea); solo consola",
+    )
+    parser.add_argument(
         "--consola", action="store_true",
         help="jugar en la consola en lugar de la ventana gráfica",
     )
@@ -52,4 +57,4 @@ def main() -> None:
         from .gui import main as gui_main
         gui_main()
         return
-    play_game(None if args.dos_jugadores else args.rival)
+    play_game(None if args.dos_jugadores else args.rival, args.modo)

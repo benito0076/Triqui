@@ -1,28 +1,63 @@
-"""Lógica del tablero: estado, jugadas válidas y detección de ganador."""
+"""Lógica del tablero: estado, jugadas válidas y detección de ganador.
+
+El tablero es de `size` x `size` casillas y gana quien alinee `win_length`
+fichas seguidas. Las casillas se numeran desde 0, por filas.
+"""
 
 from __future__ import annotations
+
+from functools import lru_cache
+from math import isqrt
 
 X = "X"
 O = "O"
 EMPTY = " "
 
-LINES = (
-    (0, 1, 2), (3, 4, 5), (6, 7, 8),  # filas
-    (0, 3, 6), (1, 4, 7), (2, 5, 8),  # columnas
-    (0, 4, 8), (2, 4, 6),             # diagonales
-)
+# nombre -> (tamaño, fichas en línea para ganar)
+MODES = {
+    "clasico": (3, 3),
+    "gran5": (5, 4),
+    "gran7": (7, 5),
+}
+
+
+@lru_cache(maxsize=None)
+def windows(size: int, win_length: int) -> tuple[tuple[int, ...], ...]:
+    """Todas las líneas de `win_length` casillas consecutivas posibles."""
+    found = []
+    for r in range(size):
+        for c in range(size):
+            for dr, dc in ((0, 1), (1, 0), (1, 1), (1, -1)):
+                end_r = r + dr * (win_length - 1)
+                end_c = c + dc * (win_length - 1)
+                if 0 <= end_r < size and 0 <= end_c < size:
+                    found.append(tuple(
+                        (r + dr * i) * size + c + dc * i for i in range(win_length)
+                    ))
+    return tuple(found)
 
 
 class Board:
-    """Tablero 3x3. Las casillas se numeran de 0 a 8, por filas."""
+    def __init__(
+        self, cells: str | None = None, size: int = 3, win_length: int = 3
+    ) -> None:
+        if cells is not None:
+            size = isqrt(len(cells))
+            if size * size != len(cells):
+                raise ValueError("El número de casillas debe ser un cuadrado")
+        if not 1 <= win_length <= size:
+            raise ValueError("win_length debe estar entre 1 y el tamaño del tablero")
+        self.size = size
+        self.win_length = win_length
+        self.cells = list(cells) if cells is not None else [EMPTY] * (size * size)
 
-    def __init__(self, cells: str | None = None) -> None:
-        self.cells = list(cells) if cells else [EMPTY] * 9
-        if len(self.cells) != 9:
-            raise ValueError("El tablero debe tener 9 casillas")
+    @classmethod
+    def from_mode(cls, mode: str) -> Board:
+        size, win_length = MODES[mode]
+        return cls(size=size, win_length=win_length)
 
     def copy(self) -> Board:
-        return Board("".join(self.cells))
+        return Board("".join(self.cells), win_length=self.win_length)
 
     @property
     def turn(self) -> str:
@@ -39,10 +74,11 @@ class Board:
             raise ValueError(f"Jugada inválida: {move}")
         self.cells[move] = self.turn
 
-    def winning_line(self) -> tuple[int, int, int] | None:
-        for a, b, c in LINES:
-            if self.cells[a] != EMPTY and self.cells[a] == self.cells[b] == self.cells[c]:
-                return (a, b, c)
+    def winning_line(self) -> tuple[int, ...] | None:
+        for line in windows(self.size, self.win_length):
+            first = self.cells[line[0]]
+            if first != EMPTY and all(self.cells[i] == first for i in line):
+                return line
         return None
 
     def winner(self) -> str | None:
@@ -56,11 +92,14 @@ class Board:
         return self.winner() is not None or EMPTY not in self.cells
 
     def __str__(self) -> str:
+        n = self.size
+        width = len(str(n * n))
         rows = []
-        for r in range(3):
+        for r in range(n):
             row = [
-                c if c != EMPTY else str(r * 3 + i + 1)
-                for i, c in enumerate(self.cells[r * 3:r * 3 + 3])
+                (c if c != EMPTY else str(r * n + i + 1)).rjust(width)
+                for i, c in enumerate(self.cells[r * n:(r + 1) * n])
             ]
             rows.append(" " + " | ".join(row))
-        return "\n---+---+---\n".join(rows)
+        sep = "\n" + "+".join("-" * (width + 2) for _ in range(n)) + "\n"
+        return sep.join(rows)

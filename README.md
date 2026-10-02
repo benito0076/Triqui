@@ -43,7 +43,8 @@ Cada rival comenta las jugadas con frases propias.
 - [x] Interfaz gráfica con tkinter, marcador y línea ganadora
 - [x] IA nivel Pollito y Zorro
 - [x] IA Minimax (con caché; la poda alfa-beta llegará con los tableros grandes)
-- [ ] Modos Gran Triqui y Fichas fugaces
+- [x] Modo Gran Triqui (5x5 con 4 en línea y 7x7 con 5 en línea)
+- [ ] Modo Fichas fugaces
 - [ ] Triqui Supremo
 - [ ] El Camaleón y las frases de los rivales
 - [ ] Marcador, repetición y temas visuales
@@ -69,6 +70,9 @@ PYTHONPATH=src python -m triqui
 
 # Versión de consola contra la IA (pollito, zorro o minimax)
 PYTHONPATH=src python -m triqui --consola --rival zorro
+
+# Consola con tablero grande (clasico, gran5 o gran7)
+PYTHONPATH=src python -m triqui --consola --modo gran5 --rival minimax
 
 # Consola, dos personas en el mismo equipo
 PYTHONPATH=src python -m triqui --consola --dos-jugadores

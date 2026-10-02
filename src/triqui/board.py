@@ -39,11 +39,15 @@ class Board:
             raise ValueError(f"Jugada inválida: {move}")
         self.cells[move] = self.turn
 
-    def winner(self) -> str | None:
+    def winning_line(self) -> tuple[int, int, int] | None:
         for a, b, c in LINES:
             if self.cells[a] != EMPTY and self.cells[a] == self.cells[b] == self.cells[c]:
-                return self.cells[a]
+                return (a, b, c)
         return None
+
+    def winner(self) -> str | None:
+        line = self.winning_line()
+        return self.cells[line[0]] if line else None
 
     def is_draw(self) -> bool:
         return self.winner() is None and EMPTY not in self.cells

@@ -40,6 +40,7 @@ Cada rival comenta las jugadas con frases propias.
 - [x] Inicializar el repositorio
 - [x] Lógica del tablero y detección de ganador/empate
 - [x] Interfaz jugable en modo clásico (consola)
+- [x] Interfaz gráfica con tkinter, marcador y línea ganadora
 - [x] IA nivel Pollito y Zorro
 - [x] IA Minimax (con caché; la poda alfa-beta llegará con los tableros grandes)
 - [ ] Modos Gran Triqui y Fichas fugaces
@@ -63,11 +64,14 @@ Cada rival comenta las jugadas con frases propias.
 Requiere Python 3.10 o superior y no tiene dependencias. Desde esta carpeta:
 
 ```bash
-# Jugar contra la IA (pollito, zorro o minimax)
-PYTHONPATH=src python -m triqui --rival zorro
+# Ventana gráfica (elige rival, símbolo y modo 2 jugadores dentro de la ventana)
+PYTHONPATH=src python -m triqui
 
-# Dos personas en el mismo equipo
-PYTHONPATH=src python -m triqui --dos-jugadores
+# Versión de consola contra la IA (pollito, zorro o minimax)
+PYTHONPATH=src python -m triqui --consola --rival zorro
+
+# Consola, dos personas en el mismo equipo
+PYTHONPATH=src python -m triqui --consola --dos-jugadores
 
 # Pruebas
 PYTHONPATH=src python -m unittest discover -s tests

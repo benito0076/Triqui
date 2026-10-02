@@ -43,5 +43,13 @@ def main() -> None:
         "--dos-jugadores", action="store_true",
         help="juegan dos personas en el mismo equipo",
     )
+    parser.add_argument(
+        "--consola", action="store_true",
+        help="jugar en la consola en lugar de la ventana gráfica",
+    )
     args = parser.parse_args()
+    if not args.consola:
+        from .gui import main as gui_main
+        gui_main()
+        return
     play_game(None if args.dos_jugadores else args.rival)

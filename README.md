@@ -38,10 +38,10 @@ Cada rival comenta las jugadas con frases propias.
 ## Hoja de ruta
 
 - [x] Inicializar el repositorio
-- [ ] Lógica del tablero y detección de ganador/empate
-- [ ] Interfaz jugable en modo clásico
-- [ ] IA nivel Pollito y Zorro
-- [ ] IA Minimax con poda alfa-beta
+- [x] Lógica del tablero y detección de ganador/empate
+- [x] Interfaz jugable en modo clásico (consola)
+- [x] IA nivel Pollito y Zorro
+- [x] IA Minimax (con caché; la poda alfa-beta llegará con los tableros grandes)
 - [ ] Modos Gran Triqui y Fichas fugaces
 - [ ] Triqui Supremo
 - [ ] El Camaleón y las frases de los rivales
@@ -60,7 +60,20 @@ Cada rival comenta las jugadas con frases propias.
 
 ## Cómo ejecutarlo
 
-Aún no hay código. Esta sección se completará con las instrucciones de instalación y ejecución cuando exista la primera versión jugable.
+Requiere Python 3.10 o superior y no tiene dependencias. Desde esta carpeta:
+
+```bash
+# Jugar contra la IA (pollito, zorro o minimax)
+PYTHONPATH=src python -m triqui --rival zorro
+
+# Dos personas en el mismo equipo
+PYTHONPATH=src python -m triqui --dos-jugadores
+
+# Pruebas
+PYTHONPATH=src python -m unittest discover -s tests
+```
+
+En PowerShell, define la variable antes: `$env:PYTHONPATH = "src"`.
 
 ## Objetivos de aprendizaje
 
